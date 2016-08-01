@@ -18,8 +18,16 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 import web.urls
+from web.views import *
 
 urlpatterns = [
+    url(r'^admin/', include(admin.site.urls)),
+
+    #url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'login.html'}),
+    #url(r'^account_login/$', account_login),
+    #url(r'^login/$', login),
+    #url(r'^logout/$', logout),
+
     url(r'^admin/', admin.site.urls),
     url(r'', include(web.urls)),
 ]

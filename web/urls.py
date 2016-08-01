@@ -21,5 +21,10 @@ from web import views
 
 admin.autodiscover()
 urlpatterns = [
+
+    url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'login.html'}),
+    url(r'^account_login/$', views.account_login),
+    url(r'^login/$', views.login),
+    url(r'^logout/$', views.logout),
     url(r'$', views.index),
 ]
