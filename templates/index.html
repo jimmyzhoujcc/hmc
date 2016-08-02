@@ -9,11 +9,12 @@
     <meta name="author" content="">
     <link rel="icon" href="http://v3.bootcss.com/favicon.ico">
 
-    <title>Dashboard Template for Bootstrap</title>
+    <title>Dashboard | HMC</title>
 
     <!-- Bootstrap core CSS -->
     <link href="./static/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="./static/css/jquery.dataTables.min.css">
+
+
     <!-- Custom styles for this template -->
     <link href="./static/css/dashboard.css" rel="stylesheet">
     <link href="http://v3.bootcss.com/examples/navbar-fixed-top/navbar-fixed-top.css" rel="stylesheet">
@@ -27,19 +28,135 @@
       <script src="//cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-    <script type="text/javascript" language="javascript" src="./static/js/jquery-1.12.3.js">
-	</script>
-	<script type="text/javascript" language="javascript" src="./static/js/jquery.dataTables.min.js">
-	</script>
-	<script type="text/javascript" class="init">
 
+
+    <!-- Highchart JS -->
+    <style type="text/css">${demo.css}</style>
+    <SCRIPT type=text/javascript src="./static/js/jquery-1.8.3.min.js"></SCRIPT>
+    <SCRIPT type=text/javascript>
+$(function () {
+    avail_host_num = 0
+    {% for h in hosts %}
+    {% if h.visible == True %}
+    avail_host_num += 1
+    {%endif%}
+    {%endfor%}
+    $('#container1').highcharts({
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            type: 'pie'
+        },
+        title: {
+           text: 'Hosts'
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                    style: {
+                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                    }
+                }
+            }
+        },
+        series: [{
+            name: 'Brands',
+            colorByPoint: true,
+            data: [{
+                name: 'Managed',
+                y: avail_host_num/{{ hosts.count }}
+            }, {
+                name: 'Not being managed',
+                y: ({{ hosts.count }} - avail_host_num)/{{ hosts.count }},
+                sliced: true,
+                selected: true
+            }]
+        }]
+    });
+});
+</script>
+
+<SCRIPT type=text/javascript>
+
+$(function () {
+    superuser_num = 0
+    operator_num = 0
+    {% for u in auth_users %}
+    {% if u.is_staff == False %}
+    operator_num += 1
+    {%endif%}
+    {% if u.is_superuser == True %}
+    superuser_num += 1
+    {%endif%}
+    {%endfor%}
+
+    $('#container2').highcharts({
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            type: 'pie'
+        },
+        title: {
+            text: 'Users'
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                    style: {
+                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                    }
+                }
+            }
+        },
+        series: [{
+            name: 'Brands',
+            colorByPoint: true,
+            data: [{
+                name: 'Operator',
+                y: operator_num
+            }, {
+                name: 'Host Operator',
+                y: {{ auth_users.count }} - superuser_num - superuser_num,
+                sliced: true,
+                selected: true
+            }, {
+                name: 'Admin',
+                y: superuser_num
+            }]
+        }]
+    });
+});
+		</script>
+
+    <script type="text/javascript" class="init">
 $(document).ready(function() {
 	$('#example').DataTable( {
 		"order": [[ 3, "desc" ]]
 	} );
 } );
-
+    </script>
+    <link rel="stylesheet" type="text/css" href="./static/css/jquery.dataTables.min.css">
+    <script type="text/javascript" language="javascript" src="./static/js/jquery-1.12.3.js">
 	</script>
+	<script type="text/javascript" language="javascript" src="./static/js/jquery.dataTables.min.js">
+	</script>
+
   </head>
 
   <body>
@@ -89,25 +206,24 @@ $(document).ready(function() {
           <h1 class="page-header">Dashboard</h1>
 
           <div class="row placeholders">
-            <div class="col-xs-6 col-sm-3 placeholder">
-              <img data-src="holder.js/200x200/auto/sky" class="img-responsive" alt="Generic placeholder thumbnail">
+            <div class="col-xs-6 col-sm-6 placeholder">
+               <!-- Begin Highchart -->
+               <SCRIPT src="../static/js/highcharts.js"></SCRIPT>
+               <SCRIPT src="../static/js/exporting.js"></SCRIPT>
+               <div id="container1" style="min-width: 300px; height: 300px; max-width: 600px; margin: 0 auto"></div>
+               <!-- End Highchart -->
+                <!--<img data-src="holder.js/200x200/auto/sky" class="img-responsive" alt="Generic placeholder thumbnail">-->
               <h4>Hosts</h4>
               <span class="text-muted"><span class="badge">{{ hosts.count }}</span></span>
             </div>
-            <div class="col-xs-6 col-sm-3 placeholder">
-              <img data-src="holder.js/200x200/auto/vine" class="img-responsive" alt="Generic placeholder thumbnail">
+            <div class="col-xs-6 col-sm-6 placeholder">
+                <!-- Begin Highchart -->
+              <div id="container2" style="min-width: 300px; height: 300px; max-width: 600px; margin: 0 auto"></div>
+                <!-- End Highchart -->
+
+              <!--<img data-src="holder.js/200x200/auto/vine" class="img-responsive" alt="Generic placeholder thumbnail">-->
               <h4>Users</h4>
-              <span class="text-muted"><span class="badge">8</span></span>
-            </div>
-            <div class="col-xs-6 col-sm-3 placeholder">
-              <img data-src="holder.js/200x200/auto/sky" class="img-responsive" alt="Generic placeholder thumbnail">
-              <h4>Logs</h4>
-              <span class="text-muted"><span class="badge">51</span></span>
-            </div>
-            <div class="col-xs-6 col-sm-3 placeholder">
-              <img data-src="holder.js/200x200/auto/vine" class="img-responsive" alt="Generic placeholder thumbnail">
-              <h4>Reports</h4>
-              <span class="text-muted"><span class="badge"> 18</span></span>
+              <span class="text-muted"><span class="badge">{{ users.count }}</span></span>
             </div>
           </div>
         </div>
@@ -130,12 +246,14 @@ $(document).ready(function() {
 							<th>Supervisor</th>
                             <th>Create Date</th>
 							<th>Update Ddate</th>
+                            <th>Managed</th>
                             <th>Action</th>
+                            <th>Refresh</th>
 						</tr>
 					</thead>
 					<tfoot>
 						<tr>
-												<th>Id</th>
+                            <th>Id</th>
 							<th>Ip</th>
 							<th>Name</th>
 							<th>Location</th>
@@ -143,7 +261,9 @@ $(document).ready(function() {
 							<th>Supervisor</th>
                             <th>Create Date</th>
 							<th>Update Ddate</th>
+                            <th>Managed</th>
                             <th>Action</th>
+                            <th>Refresh</th>
 						</tr>
 					</tfoot>
 					<tbody>
@@ -157,12 +277,17 @@ $(document).ready(function() {
 							<td>{{ h.supervisor }}</td>
                             <td>{{ h.create_at }}</td>
                             <td>{{ h.update_at }}</td>
-							<td><a class="navbar-brand" href='{{ h.path }}'><span class="label label-info">download now</span></a></td>
+                            {% if h.visible == True %}<td align="center"><a><span class="label label-success">True</span></a></td>
+                            {% else %}<td align="center"><a href="#"><span class="label label-danger">False</span></a></td>
+                            {% endif %}
+							<td><a href='{{ h.path }}'><span class="glyphicon glyphicon-save">Download</span></a></td>
+                            <td><button type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-refresh"></span> Refresh</button></td>
 					</tr>
 					{% endfor %}
 
 					</tbody>
 				</table>
+
 			</div>
 		</div>
 	</div>
@@ -170,11 +295,11 @@ $(document).ready(function() {
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="./dashboard_files/jquery.min.js"></script>
-    <script src="./dashboard_files/bootstrap.min.js"></script>
+    <!--<script src="./static/js/jquery.min.js"></script>
+    <script src="./static/js/bootstrap.min.js"></script>
     <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
-    <script src="./dashboard_files/holder.min.js"></script>
+    <script src="./static/js//holder.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="./dashboard_files/ie10-viewport-bug-workaround.js"></script>
+    <script src="./static/js/ie10-viewport-bug-workaround.js"></script>
 
 </body></html>

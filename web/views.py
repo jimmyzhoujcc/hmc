@@ -6,6 +6,9 @@ from django.contrib import auth
 import models
 
 # Create your views here.
+def pie(request):
+	return render_to_response('pie.html')
+
 def login(request):
 	return render_to_response('login.html')
 
@@ -26,10 +29,13 @@ def account_login(request):
     else:
         return render_to_response('login.html', {'err': 'Wrong username or password!'})
 
+
 def index(request):
 
     hosts = models.Host.objects.all()
+    users = models.Host_User.objects.all()
+    auth_users = models.User.objects.all()
 	#return render_to_response('index.html',{'login_user': request.user})
     return render_to_response('index.html',{
-        'hosts': hosts,'login_user': request.user
+        'hosts': hosts,'login_user': request.user,'users':users,'auth_users':auth_users
     })
