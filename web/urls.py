@@ -27,6 +27,11 @@ urlpatterns = [
     url(r'^login/$', views.login),
     url(r'^logout/$', views.logout),
     url(r'^pie/$', views.pie),
-    url(r'$', views.index),
-
+    #url(r'test_shell$',views.checkurl),
+    url(r'^$', views.index),
+    #url(r'/?(id3=collect_log)$',views.index),
+    #url(r'^data/(?P<id>\d+)/$', views.checkurl),
+    url(r'^data/(?P<id>\d+)/$', views.data),
+    url(r'^ajax_list/$', views.ajax_list, name='ajax-list'),
+    url(r'^ajax_dict/$', views.ajax_dict, name='ajax-dict'),
 ]

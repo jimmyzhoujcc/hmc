@@ -13,8 +13,7 @@
 
     <!-- Bootstrap core CSS -->
     <link href="./static/css/bootstrap.min.css" rel="stylesheet">
-    <link href="./static/css/flat-ui.css" rel="stylesheet">
-    <link href="./static/css/demo.css" rel="stylesheet">
+
 
     <!-- Custom styles for this template -->
     <link href="./static/css/dashboard.css" rel="stylesheet">
@@ -235,28 +234,10 @@ $(document).ready(function() {
     <div class="container-fluid">
 		<div class="row">
 			<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-            <!--
-            <label><input name="Fruit" type="checkbox" value=""></label>
-            <label class="checkbox" for="checkbox1">
-            <input type="checkbox" value="" id="checkbox1" data-toggle="checkbox">
-            Unchecked
-            </label>
-            <label class="checkbox" for="checkbox2">
-            <input type="checkbox" checked="checked" value="" id="checkbox2" data-toggle="checkbox" checked="">
-            Checked
-            </label>
-            !-->
-            <h3 class="demo-panel-title">Selected</h3>
-            <div class="tagsinput-primary">
-            <input name="tagsinput" class="tagsinput" data-role="tagsinput" value="School, Teacher, Colleague" />
-            </div>
-
-        <!-- /.col-xs-6 -->
 				<h2 class="page_title">HMC Table</h2>
 				<table id="example" class="display" cellspacing="0" width="100%">
 					<thead>
 						<tr>
-                            <th><label><input name="Fruit" type="checkbox" value="" align="right"></label></th>
 							<th>Id</th>
 							<th>Ip</th>
 							<th>Name</th>
@@ -272,7 +253,6 @@ $(document).ready(function() {
 					</thead>
 					<tfoot>
 						<tr>
-                            <th><label><input name="Fruit" type="checkbox" value="" align="right"></label></th>
                             <th>Id</th>
 							<th>Ip</th>
 							<th>Name</th>
@@ -289,32 +269,34 @@ $(document).ready(function() {
 					<tbody>
 					{% for h in hosts %}
 					<tr>
-                            <td align="center"><label><input name="Fruit" type="checkbox" value="" align="right"></label></td>
-                            <td align="center">{{ h.id }}</td>
-							<td align="center">{{ h.ip }}</td>
-							<td align="center">{{ h.name }}</td>
-							<td align="center">{{ h.location }}</td>
-                            <td align="center">{{ h.version }}</td>
-							<td align="center">{{ h.supervisor }}</td>
-                            <td align="center">{{ h.create_at }}</td>
-                            <td align="center">{{ h.update_at }}</td>
+                            <td>{{ h.id }}</td>
+							<td>{{ h.ip }}</td>
+							<td>{{ h.name }}</td>
+							<td>{{ h.location }}</td>
+                            <td>{{ h.version }}</td>
+							<td>{{ h.supervisor }}</td>
+                            <td>{{ h.create_at }}</td>
+                            <td>{{ h.update_at }}</td>
                             {% if h.visible == True %}<td align="center"><a><span class="label label-success">True</span></a></td>
                             {% else %}<td align="center"><a href="#"><span class="label label-danger">False</span></a></td>
                             {% endif %}
 
-							<td align="center">
-                                <div id="dict{{h.id}}">download{{h.id}}</div>
-                                <a id="dict_result{{h.id}}"></a>
+							<td>
+                                <form action="." method="get">
+                                    {% if a.hid == '' %}<input type="submit" name="id{{h.id}}" value=collect_log>
+                                    {% elif a.hid == h.id %}
+                                                            {% if h.id == a.hid %}<div id="content"></div>
+                                                            {% else %}<input type="submit" name="id{{h.id}}" value=collect_log>
+                                                            {% endif %}
 
-                                <!--
-                                    <div id="dict"><a>{{ h.id }}</a></div>
-                                    <p id="dict_result"></p>
-                                !-->
+                                    {% else %}<input type="submit" name="id{{h.id}}" value=collect_log>
+                                    {% endif %}
+                                </form>
                             </td>
 
 
 
-                            <td align="center"><button type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-refresh"></span> Refresh</button></td>
+                            <td><button type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-refresh"></span> Refresh</button></td>
 					</tr>
 					{% endfor %}
 
@@ -350,54 +332,8 @@ $(document).ready(function() {
    			update(0)
         })
     </script>
-
-    <script>
-    $(document).ready(function(){
-      // 求和 a + b
-      $("#sum").click(function(){
-        var a = $("#a").val();
-        var b = $("#b").val();
-
-        $.get("/add/",{'a':a,'b':b}, function(ret){
-            $('#result').html(ret);
-        })
-      });
-
-      // 列表 list
-      $('#list').click(function(){
-          $.getJSON('/ajax_list/',function(ret){
-            //返回值 ret 在这里是一个列表
-            for (var i = ret.length - 1; i >= 0; i--) {
-              // 把 ret 的每一项显示在网页上
-              $('#list_result').append(' ' + ret[i])
-            };
-          })
-      })
-
-      // 字典 dict
-      {% for h in hosts %}
-      $("#dict{{h.id}}").click(function(){
-          $.getJSON('/ajax_dict/',function(ret){
-              //返回值 ret 在这里是一个字典
-              //$("#dict_result{{h.id}}").append(ret.twz + '<br>');
-              $("#dict_result{{h.id}}").html(ret.twz);
-              // 也可以用 ret['twz']
-          })
-      })
-      {% endfor %}
-    });
-    </script>
-    <!--
-    <div id="dict1">Ajax 加载字典1</div>
-    <p id="dict_result1"></p>
-
-
-    <div id="list">Ajax 加载列表</div>
-    <p id="list_result"></p>
-
     <p id="time"></p>
     <div id="content"></div>
-    !-->
 			</div>
 		</div>
 	</div>
@@ -411,10 +347,5 @@ $(document).ready(function() {
     <script src="./static/js//holder.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="./static/js/ie10-viewport-bug-workaround.js"></script>
-    <script src="./static/js/flat-ui.min.js"></script>
-    <script src="./static/js/application.js"></script>
-    <script src="./static/js/video.js"></script>
-    <script src="./static/js/html5shiv.js"></script>
-    <script src="./static/js/respond.min.js"></script>
 
 </body></html>
